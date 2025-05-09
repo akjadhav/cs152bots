@@ -1,72 +1,63 @@
-from enum import Enum, auto
-import discord
-import re
+# report.py
+import enum
+import time
+from dataclasses import dataclass, field
+from typing import Optional, List
 
-class State(Enum):
-    REPORT_START = auto()
-    AWAITING_MESSAGE = auto()
-    MESSAGE_IDENTIFIED = auto()
-    REPORT_COMPLETE = auto()
 
+class Violation(enum.Enum):
+    SEXUAL_EXPLOITATION = "Sexual exploitation"
+    GROOMING            = "Grooming"
+    SEXUAL_HARASSMENT   = "Sexual harassment"
+
+
+class Priority(enum.IntEnum):
+    EXTREME_URGENT = 0
+    URGENT         = 1
+    NORMAL         = 2
+
+
+class ModOutcome(enum.Enum):
+    NO_VIOLATION   = "No violation"
+    REMOVE_MESSAGE = "Remove message"
+    WARN_USER      = "Warn user"
+    SUSPEND_USER   = "Suspend / Ban user"
+    ESCALATE_LE    = "Escalate to law-enforcement"
+
+
+@dataclass
 class Report:
-    START_KEYWORD = "report"
-    CANCEL_KEYWORD = "cancel"
-    HELP_KEYWORD = "help"
+    # core
+    reporter_id: int
+    guild_id: int
+    channel_id: int
+    message_id: int
+    target_user_id: int
+    reason: Violation
 
-    def __init__(self, client):
-        self.state = State.REPORT_START
-        self.client = client
-        self.message = None
-    
-    async def handle_message(self, message):
-        '''
-        This function makes up the meat of the user-side reporting flow. It defines how we transition between states and what 
-        prompts to offer at each of those states. You're welcome to change anything you want; this skeleton is just here to
-        get you started and give you a model for working with Discord. 
-        '''
+    # additions from the new user-flow
+    subcategory: Optional[str]        = None
+    evidence_text: str                = ""
+    attachment_urls: List[str]        = field(default_factory=list)
+    reporter_wants_block: bool        = False
 
-        if message.content == self.CANCEL_KEYWORD:
-            self.state = State.REPORT_COMPLETE
-            return ["Report cancelled."]
-        
-        if self.state == State.REPORT_START:
-            reply =  "Thank you for starting the reporting process. "
-            reply += "Say `help` at any time for more information.\n\n"
-            reply += "Please copy paste the link to the message you want to report.\n"
-            reply += "You can obtain this link by right-clicking the message and clicking `Copy Message Link`."
-            self.state = State.AWAITING_MESSAGE
-            return [reply]
-        
-        if self.state == State.AWAITING_MESSAGE:
-            # Parse out the three ID strings from the message link
-            m = re.search('/(\d+)/(\d+)/(\d+)', message.content)
-            if not m:
-                return ["I'm sorry, I couldn't read that link. Please try again or say `cancel` to cancel."]
-            guild = self.client.get_guild(int(m.group(1)))
-            if not guild:
-                return ["I cannot accept reports of messages from guilds that I'm not in. Please have the guild owner add me to the guild and try again."]
-            channel = guild.get_channel(int(m.group(2)))
-            if not channel:
-                return ["It seems this channel was deleted or never existed. Please try again or say `cancel` to cancel."]
-            try:
-                message = await channel.fetch_message(int(m.group(3)))
-            except discord.errors.NotFound:
-                return ["It seems this message was deleted or never existed. Please try again or say `cancel` to cancel."]
+    created_at: float                 = field(default_factory=time.time)
+    priority: Priority                = field(init=False)
+    outcome: Optional[ModOutcome]     = None
+    resolved_by: Optional[int]        = None  # moderator’s ID
 
-            # Here we've found the message - it's up to you to decide what to do next!
-            self.state = State.MESSAGE_IDENTIFIED
-            return ["I found this message:", "```" + message.author.name + ": " + message.content + "```", \
-                    "This is all I know how to do right now - it's up to you to build out the rest of my reporting flow!"]
-        
-        if self.state == State.MESSAGE_IDENTIFIED:
-            return ["<insert rest of reporting flow here>"]
+    # ------------------------------------------------------------------
+    def __post_init__(self) -> None:
+        self.priority = {
+            Violation.GROOMING:            Priority.EXTREME_URGENT,
+            Violation.SEXUAL_EXPLOITATION: Priority.EXTREME_URGENT,
+            Violation.SEXUAL_HARASSMENT:   Priority.URGENT,
+        }[self.reason]
 
-        return []
+    @property
+    def is_open(self) -> bool:
+        return self.outcome is None
 
-    def report_complete(self):
-        return self.state == State.REPORT_COMPLETE
-    
-
-
-    
-
+    def close(self, outcome: ModOutcome, moderator_id: int) -> None:
+        self.outcome     = outcome
+        self.resolved_by = moderator_id
