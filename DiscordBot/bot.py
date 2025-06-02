@@ -112,6 +112,12 @@ def mod_embed(
     e.add_field(name="Author", value=offending_msg.author.mention, inline=True)
     e.add_field(name="Reporter", value=f"<@{report.reporter_id}>", inline=True)
     e.add_field(name="Message link", value=offending_msg.jump_url, inline=False)
+    if report.confidence:
+        e.add_field(
+            name="Classifier confidence",
+            value=f"{report.confidence:.2f}%",
+            inline=True,
+        )
     if report.subcategory:
         e.add_field(name="Sub-category", value=report.subcategory, inline=True)
     if report.evidence_text:
