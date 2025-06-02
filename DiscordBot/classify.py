@@ -110,9 +110,25 @@ def is_sextortion(message: str) -> (bool, float):
         completion = data["choices"][0]["text"].strip()
         is_sextortion = json.loads(completion)["is_sextortion"]
 
-        # second last token is the classification token so we take its logprob to get confidence
+        # second last token are the classification tokens so we take its logprob to get confidence
         log_probs = data["choices"][0]["logprobs"]["top_logprobs"]
-        confidence = get_probability(list(log_probs[-2].values())[0])
+        confidence = 0.0
+        confidence_false = 0.0
+        for log_key, value in log_probs[-2].items():
+            if "true" in log_key:
+                confidence = get_probability(value)
+            elif "false" in log_key:
+                confidence_false = get_probability(value)
+
+        print(
+            f"[Debug] confirmed confidence: {confidence}, false confidence: {confidence_false}"
+        )
+
+        confidence = (
+            max(confidence, confidence_false)
+            if "confidence_false" in locals()
+            else confidence
+        )
 
     except (KeyError, IndexError):
         print(f"[Error] Unexpected response format: {data}")
