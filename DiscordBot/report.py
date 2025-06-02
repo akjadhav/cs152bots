@@ -40,6 +40,7 @@ class Report:
     evidence_text: str = ""
     attachment_urls: List[str] = field(default_factory=list)
     reporter_wants_block: bool = False
+    confidence: Optional[float] = 0.0  # confidence in automated classification
 
     created_at: float = field(default_factory=time.time)
     priority: Priority = field(init=False)

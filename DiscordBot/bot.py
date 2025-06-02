@@ -9,6 +9,7 @@ from typing import Optional, List, Dict, Set
 import discord
 from discord.ext import commands
 
+from classify import is_sextortion
 from report import Report, Violation, Priority, ModOutcome
 
 # ────────────────────── TOKEN & LOGGING ──────────────────────────────
@@ -447,6 +448,47 @@ async def on_ready():
                     await msg.edit(view=ModActionView(rep))
                 except discord.NotFound:
                     pass
+
+
+@bot.event
+async def on_message(message: discord.Message):
+    # ignore bot messages and DMs
+    if message.author.bot or isinstance(message.channel, discord.DMChannel):
+        return
+
+    # log the message content
+    log.info(f"Message from {message.author} in {message.channel}: {message.content}")
+
+    # check for sextortion
+    is_sextortion_flag, confidence = is_sextortion(message.content)
+    if is_sextortion_flag:
+        log.warning(
+            f"Detected sextortion in message {message.id} by {message.author} "
+            f"with confidence {confidence:.2f}"
+        )
+        # create a report
+        rep = Report(
+            reporter_id=bot.user.id,
+            guild_id=message.guild.id,
+            channel_id=message.channel.id,
+            message_id=message.id,
+            target_user_id=message.author.id,
+            confidence=confidence,
+            reason=Violation.SEXUAL_EXPLOITATION,
+            subcategory="Sextortion",
+            evidence_text="Detected sextortion via automated classifier.",
+            attachment_urls=[],
+            reporter_wants_block=False,
+        )
+        REPORTS[message.guild.id].append(rep)
+        prior = USER_VIOL_COUNTS[message.author.id]
+        mod_channel = get_mod_channel(message.guild, message.channel)
+        if mod_channel:
+            await mod_channel.send(
+                embed=mod_embed(rep, message, prior), view=ModActionView(rep)
+            )
+    else:
+        log.info(f"Message {message.id} by {message.author} is safe.")
 
 
 # ─────────────────────────── RUN BOT ─────────────────────────────────
