@@ -57,7 +57,8 @@ Fork and clone this GitHub repository. For instructions on how to fork a GitHub 
 
 ```
 {
-	"discord": "your key here"
+	"discord": "your key here",
+    "together": "your key here",
 }
 ```
 

@@ -15,8 +15,11 @@ from report import Report, Violation, Priority, ModOutcome
 TOKENS_FILE = pathlib.Path(__file__).with_name("tokens.json")
 try:
     TOKEN: str = json.loads(TOKENS_FILE.read_text())["discord"]
+    TOGETHER_TOKEN: str = json.loads(TOKENS_FILE.read_text())["together"]
 except Exception as exc:  # noqa: BLE001
-    raise SystemExit(f"❌ Could not read Discord token from {TOKENS_FILE}") from exc
+    raise SystemExit(
+        f"❌ Could not read Discord or Together token from {TOKENS_FILE}"
+    ) from exc
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("mod-bot")
