@@ -151,6 +151,8 @@ class ModActionView(discord.ui.View):
         # delete offending message
         try:
             off_msg = await channel.fetch_message(self.rep.message_id)
+            # Send notification before deleting
+            await off_msg.reply(f"🚫 Message from {offender.mention} removed due to moderation")
             await off_msg.delete()
         except discord.NotFound:
             pass
@@ -262,7 +264,7 @@ async def report_cmd(
         return
 
     dm = await ctx.author.create_dm()
-    await ctx.reply("✉️ I just DM’d you some follow-up questions!")
+    await ctx.reply("✉️ I just DM'd you some follow-up questions!")
     ACTIVE_DM_SESSIONS.add(ctx.author.id)
     try:
         rep = await _walk_user_flow(ctx.author, dm, offending_msg)
@@ -390,7 +392,7 @@ async def _walk_user_flow(
     )
     if blk:
         wants_block = True
-        await dm.send("To block: right-click the user’s name → *Block*. Stay safe! ❤️")
+        await dm.send("To block: right-click the user's name → *Block*. Stay safe! ❤️")
 
     # 5️⃣ create & store report
     rep = Report(
