@@ -25,6 +25,9 @@ except Exception as exc:  # noqa: BLE001
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("mod-bot")
 
+# -------------------- MODERATION CONFIG -----------------------------
+AUTO_REMOVE_CONFIDENCE_THRESHOLD = 70 
+
 # ─────────────────── GLOBAL IN-MEMORY STATE ─────────────────────────
 REPORTS: Dict[int, List[Report]] = defaultdict(list)  # guild_id → [Report]
 USER_VIOL_COUNTS: Dict[int, int] = defaultdict(int)  # offender_id → strikes
@@ -491,9 +494,24 @@ async def on_message(message: discord.Message):
         REPORTS[message.guild.id].append(rep)
         prior = USER_VIOL_COUNTS[message.author.id]
         mod_channel = get_mod_channel(message.guild, message.channel)
+        
+        # If confidence is high enough, automatically remove the message
+        if confidence > AUTO_REMOVE_CONFIDENCE_THRESHOLD:
+            try:
+                # Send notification before deleting
+                await message.reply(f"🚫 Message from {message.author.mention} automatically removed due to high confidence detection of prohibited content")
+                await message.delete()
+                log.info(f"Automatically removed message {message.id} due to high confidence ({confidence:.2f})")
+                # Close the report since we took action
+                rep.close(ModOutcome.REMOVE_MESSAGE, bot.user.id)
+            except discord.NotFound:
+                pass
+
+        # Always send report to mod channel
         if mod_channel:
             await mod_channel.send(
-                embed=mod_embed(rep, message, prior), view=ModActionView(rep)
+                embed=mod_embed(rep, message, prior), 
+                view=None if not rep.is_open else ModActionView(rep)
             )
     else:
         log.info(f"Message {message.id} by {message.author} is safe.")
