@@ -3,6 +3,7 @@ import enum
 import time
 from dataclasses import dataclass, field
 from typing import Optional, List
+from datetime import datetime, timezone
 
 
 class Violation(enum.Enum):
@@ -45,7 +46,10 @@ class Report:
     created_at: float = field(default_factory=time.time)
     priority: Priority = field(init=False)
     outcome: Optional[ModOutcome] = None
-    resolved_by: Optional[int] = None  # moderator’s ID
+    resolved_by: Optional[int] = None  # moderator's ID
+    resolved_at: Optional[datetime] = None
+    updated_at: float = field(default_factory=time.time)
+    id: Optional[int] = None  # Database ID
 
     # ------------------------------------------------------------------
     def __post_init__(self) -> None:
@@ -62,3 +66,5 @@ class Report:
     def close(self, outcome: ModOutcome, moderator_id: int) -> None:
         self.outcome = outcome
         self.resolved_by = moderator_id
+        self.resolved_at = datetime.now(timezone.utc)
+        self.updated_at = time.time()

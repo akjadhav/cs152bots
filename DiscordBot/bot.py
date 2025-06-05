@@ -11,6 +11,7 @@ from discord.ext import commands
 
 from classify import is_sextortion
 from report import Report, Violation, Priority, ModOutcome
+from supabase_lib import get_user_violation_count, increment_user_violation_count, create_report, resolve_report
 
 # ────────────────────── TOKEN & LOGGING ──────────────────────────────
 TOKENS_FILE = pathlib.Path(__file__).with_name("tokens.json")
@@ -29,8 +30,6 @@ log = logging.getLogger("mod-bot")
 AUTO_REMOVE_CONFIDENCE_THRESHOLD = 70 
 
 # ─────────────────── GLOBAL IN-MEMORY STATE ─────────────────────────
-REPORTS: Dict[int, List[Report]] = defaultdict(list)  # guild_id → [Report]
-USER_VIOL_COUNTS: Dict[int, int] = defaultdict(int)  # offender_id → strikes
 ACTIVE_DM_SESSIONS: Set[int] = set()  # reporter IDs in flow
 
 # ───────────────────── DISCORD BOILERPLATE ──────────────────────────
@@ -190,7 +189,8 @@ class ModActionView(discord.ui.View):
             await self._apply_enforcement(outcome, inter)
 
         self.rep.close(outcome, inter.user.id)
-        USER_VIOL_COUNTS[self.rep.target_user_id] += 1
+        await increment_user_violation_count(self.rep.target_user_id, inter.user.name)
+        await resolve_report(self.rep.id, outcome.value, inter.user.id, inter.user.name)
 
         await inter.response.edit_message(
             content=f"✅ **{outcome.value}** – by {inter.user.mention}", view=None
@@ -272,7 +272,7 @@ async def report_cmd(
     try:
         rep = await _walk_user_flow(ctx.author, dm, offending_msg)
         if rep:
-            prior = USER_VIOL_COUNTS[offending_msg.author.id]
+            prior = await get_user_violation_count(offending_msg.author.id)
             mod_channel = get_mod_channel(guild, channel)
             if mod_channel:
                 await mod_channel.send(
@@ -410,7 +410,22 @@ async def _walk_user_flow(
         attachment_urls=attach_urls,
         reporter_wants_block=wants_block,
     )
-    REPORTS[rep.guild_id].append(rep)
+    # Create report in database and store its ID
+    db_report = await create_report(
+        reporter_id=user.id,
+        reporter_name=user.name,
+        target_user_id=offending_msg.author.id,
+        target_username=offending_msg.author.name,
+        guild_id=offending_msg.guild.id,
+        channel_id=offending_msg.channel.id,
+        message_id=offending_msg.id,
+        reason=viol.value,
+        subcategory=subcat,
+        evidence_text=evidence_text.strip(),
+        attachment_urls=attach_urls,
+        reporter_wants_block=wants_block
+    )
+    rep.id = db_report["id"]  # Store the database ID
     return rep
 
 
@@ -427,8 +442,19 @@ async def _file_simple_report(
         target_user_id=offending_msg.author.id,
         reason=viol,
     )
-    REPORTS[guild.id].append(rep)
-    prior = USER_VIOL_COUNTS[offending_msg.author.id]
+    # Create report in database and store its ID
+    db_report = await create_report(
+        reporter_id=reporter.id,
+        reporter_name=reporter.name,
+        target_user_id=offending_msg.author.id,
+        target_username=offending_msg.author.name,
+        guild_id=guild.id,
+        channel_id=offending_msg.channel.id,
+        message_id=offending_msg.id,
+        reason=viol.value
+    )
+    rep.id = db_report["id"]  # Store the database ID
+    prior = await get_user_violation_count(offending_msg.author.id)
     mod_channel = get_mod_channel(guild, offending_msg.channel)
     if mod_channel:
         await mod_channel.send(
@@ -440,25 +466,6 @@ async def _file_simple_report(
 @bot.event
 async def on_ready():
     log.info("Logged in as %s (%s)", bot.user, bot.user.id)
-    # re-attach views after restart
-    for gid, reps in REPORTS.items():
-        guild = bot.get_guild(gid)
-        if not guild:
-            continue
-        sample_main = discord.utils.find(
-            lambda c: c.name.startswith("group-") and not c.name.endswith("-mod"),
-            guild.text_channels,
-        )
-        mod_chan = get_mod_channel(guild, sample_main) if sample_main else None
-        if not mod_chan:
-            continue
-        for rep in reps:
-            if rep.is_open:
-                try:
-                    msg = await mod_chan.fetch_message(rep.message_id)
-                    await msg.edit(view=ModActionView(rep))
-                except discord.NotFound:
-                    pass
 
 
 @bot.event
@@ -491,8 +498,23 @@ async def on_message(message: discord.Message):
             attachment_urls=[],
             reporter_wants_block=False,
         )
-        REPORTS[message.guild.id].append(rep)
-        prior = USER_VIOL_COUNTS[message.author.id]
+        # Create report in database and store its ID
+        db_report = await create_report(
+            reporter_id=bot.user.id,
+            reporter_name=bot.user.name,
+            target_user_id=message.author.id,
+            target_username=message.author.name,
+            guild_id=message.guild.id,
+            channel_id=message.channel.id,
+            message_id=message.id,
+            confidence=confidence,
+            reason=Violation.SEXUAL_EXPLOITATION.value,
+            subcategory="Sextortion",
+            evidence_text="Detected sextortion via automated classifier.",
+            reporter_wants_block=False
+        )
+        rep.id = db_report["id"]  # Store the database ID
+        prior = await get_user_violation_count(message.author.id)
         mod_channel = get_mod_channel(message.guild, message.channel)
         
         # If confidence is high enough, automatically remove the message
@@ -504,6 +526,7 @@ async def on_message(message: discord.Message):
                 log.info(f"Automatically removed message {message.id} due to high confidence ({confidence:.2f})")
                 # Close the report since we took action
                 rep.close(ModOutcome.REMOVE_MESSAGE, bot.user.id)
+                await resolve_report(rep.id, ModOutcome.REMOVE_MESSAGE.value, bot.user.id, bot.user.name)
             except discord.NotFound:
                 pass
 
