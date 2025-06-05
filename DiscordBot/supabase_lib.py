@@ -132,4 +132,14 @@ async def resolve_report(report_id: int, outcome: str, resolved_by: int, resolve
         "resolved_at": "now()"
     }).eq("id", report_id).execute()
 
+async def get_top_offenders(limit: int = 10, exclude_bot_id: int = None) -> list:
+    """Get top offenders by violation count."""
+    query = supabase.table("users").select("id,username,violation_count,last_violation_at").order("violation_count", desc=True)
+    
+    if exclude_bot_id:
+        query = query.neq("id", exclude_bot_id)
+    
+    result = query.limit(limit).execute()
+    return result.data
+
 

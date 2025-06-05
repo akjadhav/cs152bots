@@ -11,7 +11,7 @@ from discord.ext import commands
 
 from classify import is_sextortion
 from report import Report, Violation, Priority, ModOutcome
-from supabase_lib import get_user_violation_count, increment_user_violation_count, create_report, resolve_report
+from supabase_lib import get_user_violation_count, increment_user_violation_count, create_report, resolve_report, get_top_offenders
 
 # ────────────────────── TOKEN & LOGGING ──────────────────────────────
 TOKENS_FILE = pathlib.Path(__file__).with_name("tokens.json")
@@ -577,6 +577,42 @@ async def on_message(message: discord.Message):
 
     # Process commands
     await bot.process_commands(message)
+
+
+# ─────────────────────── MODERATOR COMMANDS ────────────────────────
+@bot.command(name="topoffenders", help="Show top offenders by violation count")
+async def top_offenders(ctx: commands.Context):
+    # Check if this is a mod channel
+    if not ctx.channel.name.endswith("-mod"):
+        await ctx.reply("This command can only be used in moderator channels.")
+        return
+
+    # Get top 10 offenders from database, excluding the bot
+    offenders = await get_top_offenders(exclude_bot_id=bot.user.id)
+    
+    if not offenders:
+        await ctx.reply("No violations recorded yet.")
+        return
+
+    # Create embed
+    embed = discord.Embed(
+        title="🏆 Top Offenders",
+        description="Users with the most violations",
+        color=discord.Color.red()
+    )
+
+    for i, user in enumerate(offenders, 1):
+        last_violation = user.get("last_violation_at", "Never")
+        if last_violation:
+            last_violation = last_violation.split("T")[0]  # Just show the date part
+        
+        embed.add_field(
+            name=f"{i}. {user['username']}",
+            value=f"Violations: {user['violation_count']}\nLast: {last_violation}",
+            inline=False
+        )
+
+    await ctx.reply(embed=embed)
 
 
 # ─────────────────────────── RUN BOT ─────────────────────────────────
