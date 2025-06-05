@@ -516,6 +516,9 @@ async def on_message(message: discord.Message):
     else:
         log.info(f"Message {message.id} by {message.author} is safe.")
 
+    # Process commands
+    await bot.process_commands(message)
+
 
 # ─────────────────────────── RUN BOT ─────────────────────────────────
 if __name__ == "__main__":
