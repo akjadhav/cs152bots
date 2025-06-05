@@ -144,7 +144,7 @@ def is_sextortion(message: str) -> (bool, float):
         
         try:
             log_probs = data["choices"][0]["logprobs"]["top_logprobs"]
-            for log_key, value in log_probs[-2].items():
+            for log_key, value in log_probs[-3].items():
                 if "true" in log_key:
                     confidence = get_probability(value)
                 elif "false" in log_key:

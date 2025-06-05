@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 
 class Violation(enum.Enum):
-    SEXUAL_EXPLOITATION = "Sexual exploitation"
+    SEXTORTION = "Sextortion"
     GROOMING = "Grooming"
     SEXUAL_HARASSMENT = "Sexual harassment"
 
@@ -54,8 +54,8 @@ class Report:
     # ------------------------------------------------------------------
     def __post_init__(self) -> None:
         self.priority = {
-            Violation.GROOMING: Priority.EXTREME_URGENT,
-            Violation.SEXUAL_EXPLOITATION: Priority.EXTREME_URGENT,
+            Violation.GROOMING: Priority.URGENT,
+            Violation.SEXTORTION: Priority.EXTREME_URGENT,
             Violation.SEXUAL_HARASSMENT: Priority.URGENT,
         }[self.reason]
 

@@ -198,7 +198,7 @@ class ModActionView(discord.ui.View):
 
         if outcome == ModOutcome.SUSPEND_USER and self.rep.reason in (
             Violation.GROOMING,
-            Violation.SEXUAL_EXPLOITATION,
+            Violation.SEXTORTION,
         ):
             await inter.channel.send(
                 f"⚠️ Evidence packet prepared for law enforcement "
@@ -251,7 +251,7 @@ async def report_cmd(
         if "groom" in rl:
             viol = Violation.GROOMING
         elif "exploit" in rl:
-            viol = Violation.SEXUAL_EXPLOITATION
+            viol = Violation.SEXTORTION
         elif "harass" in rl:
             viol = Violation.SEXUAL_HARASSMENT
         else:
@@ -292,7 +292,7 @@ async def _walk_user_flow(
     # 1️⃣ choose main category
     q1 = (
         "Please select the **reason** for reporting this message:\n"
-        "1️⃣ Sexual exploitation\n"
+        "1️⃣ Sextortion\n"
         "2️⃣ Grooming\n"
         "3️⃣ Sexual harassment\n"
         "_Type 1, 2, or 3 (or `cancel`)._"
@@ -303,7 +303,7 @@ async def _walk_user_flow(
     if not m1 or m1.content.lower() == "cancel":
         return None
     viol_map = {
-        "1": Violation.SEXUAL_EXPLOITATION,
+        "1": Violation.SEXTORTION,
         "2": Violation.GROOMING,
         "3": Violation.SEXUAL_HARASSMENT,
     }
@@ -311,7 +311,7 @@ async def _walk_user_flow(
     subcat = ""
 
     # 2️⃣ branch-specific questions
-    if viol == Violation.SEXUAL_EXPLOITATION:
+    if viol == Violation.SEXTORTION:
         ok = await yn_prompt(
             dm,
             user,
@@ -325,15 +325,27 @@ async def _walk_user_flow(
         m2 = await prompt(
             dm,
             user,
-            "Which best describes the exploitation?\n"
-            "1️⃣ Coercion\n2️⃣ Manipulation\n3️⃣ Enticement",
+            "Which type of sextortion is this?\n"
+            "1️⃣ Revenge porn\n2️⃣ Financial extortion\n3️⃣ Other",
             lambda x: x.content.strip() in {"1", "2", "3"},
         )
         if not m2:
             return None
-        subcat = {"1": "Coercion", "2": "Manipulation", "3": "Enticement"}[
-            m2.content.strip()
-        ]
+        
+        choice = m2.content.strip()
+        if choice == "3":
+            # Ask for explanation if "Other" is selected
+            m3 = await prompt(
+                dm,
+                user,
+                "Please explain what type of sextortion this is:",
+                lambda x: len(x.content.strip()) > 0
+            )
+            if not m3:
+                return None
+            subcat = f"Other: {m3.content.strip()}"
+        else:
+            subcat = {"1": "Revenge porn", "2": "Financial extortion"}[choice]
 
     elif viol == Violation.GROOMING:
         ok = await yn_prompt(
@@ -364,6 +376,30 @@ async def _walk_user_flow(
             "2": "Repeated advances after rejection",
             "3": "Inappropriate images/memes",
         }[m2.content.strip()]
+
+    elif viol == Violation.SEXTORTION:
+        ok = await yn_prompt(
+            dm,
+            user,
+            "Does this message include content **for sexual purposes**? (yes/no)",
+        )
+        if ok is None or not ok:
+            await dm.send(
+                "Understood – please restart with a different category if needed."
+            )
+            return None
+        m2 = await prompt(
+            dm,
+            user,
+            "Which type of sextortion is this?\n"
+            "1️⃣ Revenge porn\n2️⃣ Financial extortion\n3️⃣ Other",
+            lambda x: x.content.strip() in {"1", "2", "3"},
+        )
+        if not m2:
+            return None
+        subcat = {"1": "Revenge porn", "2": "Financial extortion", "3": "Other"}[
+            m2.content.strip()
+        ]
 
     # 3️⃣ evidence upload
     add_ev = await yn_prompt(
@@ -492,7 +528,7 @@ async def on_message(message: discord.Message):
             message_id=message.id,
             target_user_id=message.author.id,
             confidence=confidence,
-            reason=Violation.SEXUAL_EXPLOITATION,
+            reason=Violation.SEXTORTION,
             subcategory="Sextortion",
             evidence_text="Detected sextortion via automated classifier.",
             attachment_urls=[],
@@ -508,7 +544,7 @@ async def on_message(message: discord.Message):
             channel_id=message.channel.id,
             message_id=message.id,
             confidence=confidence,
-            reason=Violation.SEXUAL_EXPLOITATION.value,
+            reason=Violation.SEXTORTION.value,
             subcategory="Sextortion",
             evidence_text="Detected sextortion via automated classifier.",
             reporter_wants_block=False
