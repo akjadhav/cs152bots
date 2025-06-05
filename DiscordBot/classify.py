@@ -85,14 +85,14 @@ def is_sextortion(message: str) -> (bool, float):
     payload = {
         "model": MODEL_NAME,
         "prompt": prompt,
-        "max_tokens": 8,
+        "max_tokens": 20,  # Increased to ensure complete JSON
         "temperature": 0.0,  # deterministic output
         "logprobs": 2,  # Return top‐2 token logprobs
         "response_format": {
             "type": "json_object",
             "schema": SextortionClassification.model_json_schema(),
         },
-        "stop": ["\n"],
+        # Removed stop parameter to avoid truncation
     }
 
     try:
@@ -101,38 +101,61 @@ def is_sextortion(message: str) -> (bool, float):
         )
         resp.raise_for_status()
     except requests.RequestException as e:
-        print(f"[Error] Together API request failed: {e}")
-        return False
+        return (False, 0.0)
 
     data = resp.json()
 
     try:
         completion = data["choices"][0]["text"].strip()
-        is_sextortion = json.loads(completion)["is_sextortion"]
+        
+        # Try to parse JSON
+        try:
+            parsed_json = json.loads(completion)
+            is_sextortion = parsed_json["is_sextortion"]
+        except json.JSONDecodeError as e:
+            # Check if it's just missing the closing brace
+            if completion.startswith('{"is_sextortion":') and not completion.endswith('}'):
+                try:
+                    fixed_completion = completion + '}'
+                    parsed_json = json.loads(fixed_completion)
+                    is_sextortion = parsed_json["is_sextortion"]
+                except:
+                    # Fallback to text parsing
+                    completion_lower = completion.lower()
+                    if "true" in completion_lower:
+                        is_sextortion = True
+                    elif "false" in completion_lower:
+                        is_sextortion = False
+                    else:
+                        return (False, 0.0)
+            else:
+                # Try to extract boolean from text
+                completion_lower = completion.lower()
+                if "true" in completion_lower:
+                    is_sextortion = True
+                elif "false" in completion_lower:
+                    is_sextortion = False
+                else:
+                    return (False, 0.0)
 
-        # second last token are the classification tokens so we take its logprob to get confidence
-        log_probs = data["choices"][0]["logprobs"]["top_logprobs"]
+        # Extract confidence from logprobs
         confidence = 0.0
         confidence_false = 0.0
-        for log_key, value in log_probs[-2].items():
-            if "true" in log_key:
-                confidence = get_probability(value)
-            elif "false" in log_key:
-                confidence_false = get_probability(value)
+        
+        try:
+            log_probs = data["choices"][0]["logprobs"]["top_logprobs"]
+            for log_key, value in log_probs[-2].items():
+                if "true" in log_key:
+                    confidence = get_probability(value)
+                elif "false" in log_key:
+                    confidence_false = get_probability(value)
 
-        print(
-            f"[Debug] confirmed confidence: {confidence}, false confidence: {confidence_false}"
-        )
+            confidence = max(confidence, confidence_false) if confidence_false > 0 else confidence
+        except (KeyError, IndexError) as e:
+            confidence = 50.0  # Default confidence
 
-        confidence = (
-            max(confidence, confidence_false)
-            if "confidence_false" in locals()
-            else confidence
-        )
-
-    except (KeyError, IndexError):
-        print(f"[Error] Unexpected response format: {data}")
-        return False
+    except (KeyError, IndexError) as e:
+        return (False, 0.0)
 
     return (is_sextortion, confidence)
 

@@ -1,0 +1,306 @@
+message,is_sextortion,source
+I'm thinking of going hiking on Saturday; interested?,FALSE,LLM
+"I found a funny meme, want to see it?",FALSE,LLM
+Your project looks fantastic; great job!,FALSE,LLM
+We should organize a game night sometime.,FALSE,LLM
+Can you send me the link to that article you mentioned?,FALSE,LLM
+"Hey, are you free to hang out this weekend?",FALSE,LLM
+Check out this funny video I found online.,FALSE,LLM
+"I got tickets to the concert, want to join?",FALSE,LLM
+Did you hear about the new restaurant downtown?,FALSE,LLM
+Are you coming to the study group this evening?,FALSE,LLM
+Let me know if you need any help with the assignment.,FALSE,LLM
+Did you watch the game last night? It was amazing!,FALSE,LLM
+Happy birthday! Hope you have a great day!,FALSE,LLM
+"I'm baking cookies today, want some?",FALSE,LLM
+"I love your new profile picture, it looks great!",FALSE,LLM
+Can you help me with my homework tonight?,FALSE,LLM
+Do you want to join the book club next week?,FALSE,LLM
+Thanks for helping me move last weekend.,FALSE,LLM
+Can you review my presentation slides?,FALSE,LLM
+Let's plan a movie night on Friday.,FALSE,LLM
+I'll grab lunch and meet you in the cafeteria.,FALSE,LLM
+I found a great coffee shop near campus.,FALSE,LLM
+Congrats on your promotion! So well deserved.,FALSE,LLM
+Let's meet for coffee tomorrow afternoon.,FALSE,LLM
+"Just finished that book you recommended, it was awesome!",FALSE,LLM
+I have so much going on right now I have finals to study for tons of homework dance performance I don't have time to deal with you,FALSE,US v. Hernandez
+Dude i'm at school,FALSE,US v. Hernandez
+love you. you're my online valentines,FALSE,US v. Hernandez
+hey how was lunch,FALSE,LLM
+omg did you see what happened in class today,FALSE,LLM
+wanna hang out later,FALSE,LLM
+I'm so tired rn,FALSE,LLM
+can you pick me up,FALSE,LLM
+lol that's hilarious,FALSE,LLM
+what are you doing tonight,FALSE,LLM
+did you finish the homework,FALSE,LLM
+I'm bored af,FALSE,LLM
+want to grab coffee,FALSE,LLM
+running late be there in 10,FALSE,LLM
+that movie was so good,FALSE,LLM
+can't believe it's already Friday,FALSE,LLM
+I need a nap,FALSE,LLM
+wanna come over and watch Netflix,FALSE,LLM
+did you hear about Sarah and Jake,FALSE,LLM
+I'm literally dying of laughter,FALSE,LLM
+what's for dinner,FALSE,LLM
+can you send me those notes,FALSE,LLM
+I forgot my charger again,FALSE,LLM
+this weather is awful,FALSE,LLM
+I can't find my keys anywhere,FALSE,LLM
+that test was brutal,FALSE,LLM
+want to go shopping tomorrow,FALSE,LLM
+I'm craving pizza,FALSE,LLM
+did you see the new episode,FALSE,LLM
+my mom is driving me crazy,FALSE,LLM
+I love this song,FALSE,LLM
+can you cover my shift,FALSE,LLM
+I'm so done with today,FALSE,LLM
+want to study together,FALSE,LLM
+I locked myself out,FALSE,LLM
+that party was wild,FALSE,LLM
+I need new clothes,FALSE,LLM
+can you give me a ride home,FALSE,LLM
+I'm broke until payday,FALSE,LLM
+did you try that new restaurant,FALSE,LLM
+I can't sleep,FALSE,LLM
+want to go to the beach,FALSE,LLM
+I hate group projects,FALSE,LLM
+can you help me with this,FALSE,LLM
+I'm stress eating again,FALSE,LLM
+that professor is the worst,FALSE,LLM
+I miss summer already,FALSE,LLM
+want to hit the gym,FALSE,LLM
+I need to do laundry,FALSE,LLM
+can you call me when you're free,FALSE,LLM
+I'm having the worst day,FALSE,LLM
+want to get ice cream,FALSE,LLM
+I can't believe I said that,FALSE,LLM
+my phone is about to die,FALSE,LLM
+want to play video games,FALSE,LLM
+I'm so excited for the weekend,FALSE,LLM
+can you check if I left my jacket there,FALSE,LLM
+I need to clean my room,FALSE,LLM
+want to go see a movie,FALSE,LLM
+I'm procrastinating so hard,FALSE,LLM
+can you venmo me for dinner,FALSE,LLM
+I love your new haircut,FALSE,LLM
+want to go for a walk,FALSE,LLM
+I can't decide what to wear,FALSE,LLM
+that concert was amazing,FALSE,LLM
+I need more coffee,FALSE,LLM
+want to get food,FALSE,LLM
+I'm running on 3 hours of sleep,FALSE,LLM
+can you water my plants,FALSE,LLM
+I hate this weather,FALSE,LLM
+want to carpool tomorrow,FALSE,LLM
+I forgot we had plans,FALSE,LLM
+that joke was not funny,FALSE,LLM
+I need to charge my laptop,FALSE,LLM
+want to go thrifting,FALSE,LLM
+I'm addicted to this show,FALSE,LLM
+can you pick up some snacks,FALSE,LLM
+I'm so nervous about tomorrow,FALSE,LLM
+want to meet at the usual place,FALSE,LLM
+I can't find anything to watch,FALSE,LLM
+that outfit is so cute,FALSE,LLM
+I need to call my parents,FALSE,LLM
+want to get bubble tea,FALSE,LLM
+I'm having a mental breakdown,FALSE,LLM
+can you send me that recipe,FALSE,LLM
+I love rainy days,FALSE,LLM
+want to go hiking,FALSE,LLM
+I need to update my resume,FALSE,LLM
+that meme is so accurate,FALSE,LLM
+I'm terrible at adulting,FALSE,LLM
+want to order takeout,FALSE,LLM
+I can't believe it's already December,FALSE,LLM
+that assignment is due when,FALSE,LLM
+I need new headphones,FALSE,LLM
+want to go to target,FALSE,LLM
+I'm so tired of this routine,FALSE,LLM
+can you remind me to call the dentist,FALSE,LLM
+I love this weather,FALSE,LLM
+want to have a sleepover,FALSE,LLM
+I need to find a part-time job,FALSE,LLM
+that TikTok was hilarious,FALSE,LLM
+I'm craving tacos,FALSE,LLM
+want to go to the farmers market,FALSE,LLM
+I can't adult today,FALSE,LLM
+that book was so good,FALSE,LLM
+I need to do my taxes,FALSE,LLM
+want to go bowling,FALSE,LLM
+I'm having major FOMO,FALSE,LLM
+can you help me move this weekend,FALSE,LLM
+I love your new car,FALSE,LLM
+want to try that new workout class,FALSE,LLM
+I need to organize my closet,FALSE,LLM
+that song is stuck in my head,FALSE,LLM
+I'm so hungry but too lazy to cook,FALSE,LLM
+want to go mini golfing,FALSE,LLM
+I can't believe I lost my wallet,FALSE,LLM
+that restaurant has the best fries,FALSE,LLM
+I need to schedule a doctor's appointment,FALSE,LLM
+want to have a picnic,FALSE,LLM
+I'm obsessed with this new band,FALSE,LLM
+can you teach me how to cook that,FALSE,LLM
+I love your energy today,FALSE,LLM
+want to go to the art museum,FALSE,LLM
+I need to learn how to budget,FALSE,LLM
+that sunset was beautiful,FALSE,LLM
+I'm so ready for spring break,FALSE,LLM
+"Send me the files, or I will send your pics to your boss.",TRUE,LLM
+Send me nudes or I'll show the chat logs to your parents.,TRUE,LLM
+I have your intimate photos; send more or I’ll blackmail you.,TRUE,LLM
+I’ll make sure everyone sees your private photos if you don’t pay.,TRUE,LLM
+"You better send me those photos, otherwise I'll expose you.",TRUE,LLM
+I’ll post your nudes on social media if you don’t comply.,TRUE,LLM
+I have screenshots of your private messages; send me more explicit content or I'll show them to your friends.,TRUE,LLM
+Transfer the money now or I’ll distribute your private videos.,TRUE,LLM
+You have 24 hours to send me explicit photos or I’ll share your location.,TRUE,LLM
+"Send the images, or I’ll tell everyone you were cheating.",TRUE,LLM
+I’ll release your private video to the internet if you ignore me.,TRUE,LLM
+You must comply or I’ll send your private photos to the police.,TRUE,LLM
+Send me nudes or I'll share your private photos with everyone.,TRUE,LLM
+"If I don’t get those pictures, I’ll make your secrets public.",TRUE,LLM
+"If you don’t comply, I'll upload those photos everywhere.",TRUE,LLM
+"If you don't pay me $200, I'll leak those videos of you online.",TRUE,LLM
+"If you don’t send me those images, I’ll show them to my family and friends.",TRUE,LLM
+Give me your password or I'll post your intimate pictures.,TRUE,LLM
+Produce more explicit content or I’ll blow up your phone with threats.,TRUE,LLM
+"Give me what I want, or I’ll leak the videos to your family.",TRUE,LLM
+I’ll ruin your life if you don’t give me those pictures.,TRUE,LLM
+"Give me $100, or I’ll make your dirty secrets go viral.",TRUE,LLM
+"Send the video, or I will show your pics to your entire school.",TRUE,LLM
+"Share those pictures, or I'll ruin your reputation.",TRUE,LLM
+I’ll post your sexting convo if you don’t send more content.,TRUE,LLM
+"If you don't respond, I'll send these screenshots to your entire contact list.",TRUE,LLM
+I know where you live—send more photos or face the consequences.,TRUE,LLM
+"Send me what I asked for, or I’ll make a scene at your workplace.",TRUE,LLM
+I’ll message your friends with your pictures if you don’t cooperate.,TRUE,LLM
+"Post those videos yourself, or I’ll post them for you.",TRUE,LLM
+Refuse me again and I’ll destroy your reputation online.,TRUE,LLM
+This is your final warning—send the pics or regret it forever.,TRUE,LLM
+Don’t ignore me. You know what will happen if you do.,TRUE,LLM
+"If I don’t hear from you in an hour, I’ll assume you want your secrets leaked.",TRUE,LLM
+You made a mistake trusting me—now pay or suffer.,TRUE,LLM
+Give me your messages or I’ll destroy your reputation.,TRUE,LLM
+Give me your secrets or I’ll destroy your reputation.,TRUE,LLM
+Send me your screenshots or I’ll share them with everyone.,TRUE,LLM
+Send me your messages or I’ll report you.,TRUE,LLM
+Expose your chat logs or I’ll publish them online.,TRUE,LLM
+Upload your messages or I’ll send them to your family.,TRUE,LLM
+Leak your intimate content or I’ll destroy your reputation.,TRUE,LLM
+Share your password or I’ll leak them to the media.,TRUE,LLM
+"If you don't respond, I'll send these screenshots to your entire contact list.",TRUE,LLM
+Show your chat logs or I’ll ruin your life.,TRUE,LLM
+Post your secrets or I’ll tell your boss.,TRUE,LLM
+Upload your chat logs or I’ll ruin your life.,TRUE,LLM
+Give me your messages or I’ll send them to your family.,TRUE,LLM
+Forward your chat logs or I’ll tell your boss.,TRUE,LLM
+Give me your password or I’ll report you.,TRUE,LLM
+Upload your secrets or I’ll destroy your reputation.,TRUE,LLM
+Forward your secrets or I’ll destroy your reputation.,TRUE,LLM
+Leak your location or I’ll ruin your life.,TRUE,LLM
+Share your secrets or I’ll publish them online.,TRUE,LLM
+Expose your intimate content or I’ll send them to your family.,TRUE,LLM
+Forward your location or I’ll leak them to the media.,TRUE,LLM
+Upload your videos or I’ll tell your boss.,TRUE,LLM
+Post your intimate content or I’ll tell your boss.,TRUE,LLM
+Share your secrets or I’ll tell your boss.,TRUE,LLM
+Show your messages or I’ll destroy your reputation.,TRUE,LLM
+Post your intimate content or I’ll share them with everyone.,TRUE,LLM
+Send me your location or I’ll send them to your family.,TRUE,LLM
+Expose your secrets or I’ll ruin your life.,TRUE,LLM
+Upload your chat logs or I’ll share them with everyone.,TRUE,LLM
+"Send me what I asked for, or I’ll make a scene at your workplace.",TRUE,LLM
+Give me your chat logs or I’ll send them to your parents.,TRUE,LLM
+Show your photos or I’ll tell your boss.,TRUE,LLM
+Transfer your intimate content or I’ll send them to your family.,TRUE,LLM
+Expose your location or I’ll tell your boss.,TRUE,LLM
+Forward your intimate content or I’ll destroy your reputation.,TRUE,LLM
+Leak your location or I’ll leak them to the media.,TRUE,LLM
+Refuse me again and I’ll destroy your reputation online.,TRUE,LLM
+Upload your secrets or I’ll send them to your family.,TRUE,LLM
+Show your screenshots or I’ll leak them to the media.,TRUE,LLM
+Give me your screenshots or I’ll share them with everyone.,TRUE,LLM
+This is your final warning—send the pics or regret it forever.,TRUE,LLM
+Show your messages or I’ll send them to your parents.,TRUE,LLM
+Upload your screenshots or I’ll ruin your life.,TRUE,LLM
+Upload your messages or I’ll send them to your parents.,TRUE,LLM
+Post your messages or I’ll share them with everyone.,TRUE,LLM
+Transfer your screenshots or I’ll send them to your family.,TRUE,LLM
+Transfer your messages or I’ll tell your boss.,TRUE,LLM
+Upload your screenshots or I’ll publish them online.,TRUE,LLM
+Forward your photos or I’ll publish them online.,TRUE,LLM
+Forward your photos or I’ll destroy your reputation.,TRUE,LLM
+Send me your location or I’ll leak them to the media.,TRUE,LLM
+Post your videos or I’ll send them to your family.,TRUE,LLM
+"If I don’t hear from you in an hour, I’ll assume you want your secrets leaked.",TRUE,LLM
+Send me your chat logs or I’ll blast them to your school.,TRUE,LLM
+Share your intimate content or I’ll leak them to the media.,TRUE,LLM
+Leak your secrets or I’ll destroy your reputation.,TRUE,LLM
+Post your secrets or I’ll ruin your life.,TRUE,LLM
+Leak your videos or I’ll send them to your family.,TRUE,LLM
+Forward your location or I’ll blast them to your school.,TRUE,LLM
+Post your photos or I’ll publish them online.,TRUE,LLM
+You made a mistake trusting me—now pay or suffer.,TRUE,LLM
+Give me your secrets or I’ll publish them online.,TRUE,LLM
+Show your videos or I’ll ruin your life.,TRUE,LLM
+Forward your photos or I’ll send them to your family.,TRUE,LLM
+Share your screenshots or I’ll blast them to your school.,TRUE,LLM
+Forward your secrets or I’ll leak them to the media.,TRUE,LLM
+Post your photos or I’ll blast them to your school.,TRUE,LLM
+Send me your photos or I’ll destroy your reputation.,TRUE,LLM
+Forward your secrets or I’ll blast them to your school.,TRUE,LLM
+Leak your photos or I’ll send them to your family.,TRUE,LLM
+Give me your intimate content or I’ll destroy your reputation.,TRUE,LLM
+Share your location or I’ll publish them online.,TRUE,LLM
+Send me your password or I’ll leak them to the media.,TRUE,LLM
+Send me your screenshots or I’ll send them to your parents.,TRUE,LLM
+Leak your location or I’ll destroy your reputation.,TRUE,LLM
+Forward your screenshots or I’ll tell your boss.,TRUE,LLM
+Forward your location or I’ll tell your boss.,TRUE,LLM
+Share your photos or I’ll publish them online.,TRUE,LLM
+Upload your intimate content or I’ll send them to your family.,TRUE,LLM
+Expose your messages or I’ll publish them online.,TRUE,LLM
+Upload your screenshots or I’ll report you.,TRUE,LLM
+"Post those videos yourself, or I’ll post them for you.",TRUE,LLM
+Upload your messages or I’ll ruin your life.,TRUE,LLM
+Post your photos or I’ll destroy your reputation.,TRUE,LLM
+Give me your chat logs or I’ll destroy your reputation.,TRUE,LLM
+Show your messages or I’ll publish them online.,TRUE,LLM
+Share your secrets or I’ll send them to your parents.,TRUE,LLM
+Transfer your password or I’ll send them to your family.,TRUE,LLM
+Don’t ignore me. You know what will happen if you do.,TRUE,LLM
+Send me your chat logs or I’ll leak them to the media.,TRUE,LLM
+Transfer your messages or I’ll ruin your life.,TRUE,LLM
+Show your photos or I’ll share them with everyone.,TRUE,LLM
+I know where you live—send more photos or face the consequences.,TRUE,LLM
+Expose your screenshots or I’ll publish them online.,TRUE,LLM
+Send me your chat logs or I’ll publish them online.,TRUE,LLM
+Show your location or I’ll send them to your parents.,TRUE,LLM
+Give me your password or I’ll tell your boss.,TRUE,LLM
+I’ll message your friends with your pictures if you don’t cooperate.,TRUE,LLM
+Leak your videos or I’ll send them to your parents.,TRUE,LLM
+Forward your photos or I’ll leak them to the media.,TRUE,LLM
+How many guys have you sent dirty pics to because I have some of you.,TRUE,US v. Hernandez
+I want more pics of you. New ones taken right now,TRUE,US v. Hernandez
+dont cut out head. be sexier! grab your tits and ass a little if you have to.,TRUE,US v. Hernandez
+dont you think you should tell me that?” there is a lot i want tonight. i texted you early enough. either im getting everything tonight or tomorrow I'll take it out on you. letting you know now.,TRUE,US v. Hernandez
+so you dont know what everyone will say about you? there is a video of you masturbating.,TRUE,US v. Hernandez
+talking to your stanky ass too much today. k take your clothes off.,TRUE,US v. Hernandez
+strip vid first. wear a suggestive outfit,TRUE,US v. Hernandez
+i already told you bitch. a video of you sucking your boyfriends dick. Have him hold the camera and record you,TRUE,US v. Hernandez
+nah. Im done with you now. The deal is off. Im gonna have fun and expose you. goodnigt,TRUE,US v. Hernandez
+no u are a whore. the biggest one i came across. Ive exposed 10 thousand whores just like you. so u sound stupid,TRUE,US v. Hernandez
+i bet shes nice and tight. very innocent just like you were. give me her number. I'll teach her. dont worry she will be in good hands haha,TRUE,US v. Hernandez
+well you better step it up or i'll have my way with your lil sister.,TRUE,US v. Hernandez
+"you're so so gay. im gonna end up showing everyone someday watch. hes gonna dump your trashy ass as result, im sure of it. night slut",TRUE,US v. Hernandez
+where my videos slut,TRUE,US v. Hernandez
+I know where you live. I come at night.,TRUE,US v. Hernandez
+"Hey I have screenshot all ur followers and tags and those
+that comment on ur post. I can send this nudes to everyone
+and also send your nudes Until it goes viral....All you’ve to
+do is to cooperate with me and I will not expose you",TRUE,US v. Ogoshi
