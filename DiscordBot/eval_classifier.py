@@ -133,6 +133,7 @@ def create_visualizations(true_labels, predictions, confidences, results):
     """Create comprehensive visualizations."""
     print("\n🎨 Generating comprehensive visualizations...")
     print("   Creating 12 individual charts and saving to figures/ folder...")
+    print("   (Note: Qualitative analysis chart 13 will be generated after error analysis)")
     
     # Create figures directory
     if not os.path.exists('figures'):
@@ -311,6 +312,7 @@ Std Confidence: {:.1f}%""".format(
     save_individual_chart(plot_summary, '12_performance_summary.png', 'Performance Summary', (10, 8))
     
     print("   ✅ Individual charts saved (01-12)")
+    print("   📊 Note: Qualitative analysis (chart 13) will be generated after error analysis")
     
     # Now create the combined figure
     fig, axes = plt.subplots(3, 4, figsize=(20, 15))
@@ -485,31 +487,237 @@ Std Confidence: {:.1f}%
     print("   ✅ All visualizations completed!")
     print("   💾 Individual charts saved in figures/ folder (01-12)")
     print("   💾 Combined overview saved as 'classifier_evaluation_combined.png'")
+    print("   📊 Qualitative analysis (chart 13) will be generated after error analysis")
 
 def analyze_errors(df, true_labels, predictions, confidences):
-    """Analyze misclassified examples."""
-    print("\n🔍 ERROR ANALYSIS")
-    print("="*50)
+    """Analyze misclassified examples with comprehensive failure analysis."""
+    print("\n🔍 COMPREHENSIVE ERROR ANALYSIS")
+    print("="*70)
     
-    # False Positives
+    # Get all failure indices
     fp_mask = (np.array(predictions) == True) & (np.array(true_labels) == False)
-    fp_indices = np.where(fp_mask)[0]
-    
-    print("\n❌ FALSE POSITIVES ({} examples):".format(len(fp_indices)))
-    for i, idx in enumerate(fp_indices[:3]):
-        msg = df.iloc[idx]['message']
-        conf = confidences[idx]
-        print("{}. [{:5.1f}%] {}...".format(i+1, conf, msg[:60]))
-    
-    # False Negatives
     fn_mask = (np.array(predictions) == False) & (np.array(true_labels) == True)
+    fp_indices = np.where(fp_mask)[0]
     fn_indices = np.where(fn_mask)[0]
     
-    print("\n❌ FALSE NEGATIVES ({} examples):".format(len(fn_indices)))
-    for i, idx in enumerate(fn_indices[:3]):
-        msg = df.iloc[idx]['message']
-        conf = confidences[idx]
-        print("{}. [{:5.1f}%] {}...".format(i+1, conf, msg[:60]))
+    # Create detailed failure lists
+    false_positives = []
+    false_negatives = []
+    
+    # Collect False Positives
+    for idx in fp_indices:
+        fp_case = {
+            'index': idx,
+            'message': df.iloc[idx]['message'],
+            'confidence': confidences[idx],
+            'true_label': 'Safe',
+            'predicted_label': 'Sextortion',
+            'error_type': 'False Positive'
+        }
+        false_positives.append(fp_case)
+    
+    # Collect False Negatives  
+    for idx in fn_indices:
+        fn_case = {
+            'index': idx,
+            'message': df.iloc[idx]['message'],
+            'confidence': confidences[idx],
+            'true_label': 'Sextortion',
+            'predicted_label': 'Safe',
+            'error_type': 'False Negative'
+        }
+        false_negatives.append(fn_case)
+    
+    # Print detailed analysis
+    print("\n❌ FALSE POSITIVES ({} cases):".format(len(false_positives)))
+    print("   (Safe messages incorrectly flagged as sextortion)")
+    print("-" * 70)
+    for i, case in enumerate(false_positives):
+        print("{}. [Conf: {:5.1f}%] [Index: {}]".format(i+1, case['confidence'], case['index']))
+        print("   Message: \"{}\"".format(case['message'][:100] + "..." if len(case['message']) > 100 else case['message']))
+        print()
+    
+    print("\n❌ FALSE NEGATIVES ({} cases):".format(len(false_negatives)))
+    print("   (Sextortion messages incorrectly classified as safe)")
+    print("-" * 70)
+    for i, case in enumerate(false_negatives):
+        print("{}. [Conf: {:5.1f}%] [Index: {}]".format(i+1, case['confidence'], case['index']))
+        print("   Message: \"{}\"".format(case['message'][:100] + "..." if len(case['message']) > 100 else case['message']))
+        print()
+    
+    # Save detailed failure report
+    print("💾 Saving detailed failure report...")
+    failure_report = {
+        'false_positives': false_positives,
+        'false_negatives': false_negatives,
+        'summary': {
+            'total_failures': len(false_positives) + len(false_negatives),
+            'false_positive_count': len(false_positives),
+            'false_negative_count': len(false_negatives),
+            'total_samples': len(df)
+        }
+    }
+    
+    # Save to CSV for detailed analysis
+    all_failures = []
+    for fp in false_positives:
+        all_failures.append(fp)
+    for fn in false_negatives:
+        all_failures.append(fn)
+    
+    if all_failures:
+        failures_df = pd.DataFrame(all_failures)
+        failures_df.to_csv('classification_failures.csv', index=False)
+        print("   ✅ Saved detailed failures to 'classification_failures.csv'")
+    
+    return failure_report
+
+def create_qualitative_analysis_figure(failure_report):
+    """Create a qualitative analysis figure showing failure patterns."""
+    print("\n🎨 Creating qualitative analysis figure...")
+    
+    # Categorize failures by patterns (you can enhance this based on your specific patterns)
+    def categorize_failure(message, error_type):
+        """Simple categorization - you can enhance this with more sophisticated analysis."""
+        msg_lower = message.lower()
+        
+        if error_type == 'False Positive':
+            # Safe messages incorrectly flagged
+            if any(word in msg_lower for word in ['love', 'relationship', 'dating', 'meet']):
+                return 'Legitimate romantic content'
+            elif any(word in msg_lower for word in ['photo', 'picture', 'image', 'send']):
+                return 'Innocent photo requests'
+            elif any(word in msg_lower for word in ['money', 'cash', 'payment', 'pay']):
+                return 'Financial discussions'
+            else:
+                return 'Other safe content'
+        else:  # False Negative
+            # Sextortion messages missed
+            if any(word in msg_lower for word in ['photo', 'picture', 'nude', 'naked']):
+                return 'Image-based sextortion'
+            elif any(word in msg_lower for word in ['money', 'cash', 'pay', 'send']):
+                return 'Financial extortion'
+            elif any(word in msg_lower for word in ['share', 'post', 'family', 'friends']):
+                return 'Threat to share'
+            else:
+                return 'Other sextortion'
+    
+    # Categorize all failures
+    fp_categories = {}
+    fn_categories = {}
+    
+    for fp in failure_report['false_positives']:
+        category = categorize_failure(fp['message'], 'False Positive')
+        if category not in fp_categories:
+            fp_categories[category] = []
+        fp_categories[category].append(fp)
+    
+    for fn in failure_report['false_negatives']:
+        category = categorize_failure(fn['message'], 'False Negative')
+        if category not in fn_categories:
+            fn_categories[category] = []
+        fn_categories[category].append(fn)
+    
+    # Create the qualitative analysis figure
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 12))
+    fig.suptitle('Qualitative Analysis: Classification Failures', fontsize=16, fontweight='bold')
+    
+    # Left panel: False Positives Analysis
+    ax1.set_title('False Positives: Safe Content Incorrectly Flagged', fontsize=14, fontweight='bold', color='red')
+    ax1.axis('off')
+    
+    y_pos = 0.95
+    ax1.text(0.02, y_pos, 'SAFE CONTENT INCORRECTLY FLAGGED AS SEXTORTION:', 
+             fontsize=12, fontweight='bold', transform=ax1.transAxes)
+    y_pos -= 0.08
+    
+    for category, cases in fp_categories.items():
+        # Category header
+        ax1.text(0.05, y_pos, '▶ {} ({} cases):'.format(category.upper(), len(cases)), 
+                fontsize=11, fontweight='bold', color='darkred', transform=ax1.transAxes)
+        y_pos -= 0.05
+        
+        # Show examples (limit to 3 per category)
+        for i, case in enumerate(cases[:3]):
+            example_text = case['message'][:80] + "..." if len(case['message']) > 80 else case['message']
+            confidence_text = "[{:.1f}% conf]".format(case['confidence'])
+            ax1.text(0.08, y_pos, '• {} "{}"'.format(confidence_text, example_text), 
+                    fontsize=9, color='darkred', transform=ax1.transAxes, style='italic')
+            y_pos -= 0.04
+        
+        if len(cases) > 3:
+            ax1.text(0.08, y_pos, '... and {} more cases'.format(len(cases)-3), 
+                    fontsize=9, color='gray', transform=ax1.transAxes)
+            y_pos -= 0.04
+        
+        y_pos -= 0.03  # Extra space between categories
+        
+        if y_pos < 0.1:  # Prevent text from going off the bottom
+            break
+    
+    # Right panel: False Negatives Analysis
+    ax2.set_title('False Negatives: Sextortion Content Missed', fontsize=14, fontweight='bold', color='orange')
+    ax2.axis('off')
+    
+    y_pos = 0.95
+    ax2.text(0.02, y_pos, 'SEXTORTION CONTENT INCORRECTLY CLASSIFIED AS SAFE:', 
+             fontsize=12, fontweight='bold', transform=ax2.transAxes)
+    y_pos -= 0.08
+    
+    for category, cases in fn_categories.items():
+        # Category header
+        ax2.text(0.05, y_pos, '▶ {} ({} cases):'.format(category.upper(), len(cases)), 
+                fontsize=11, fontweight='bold', color='darkorange', transform=ax2.transAxes)
+        y_pos -= 0.05
+        
+        # Show examples (limit to 3 per category)
+        for i, case in enumerate(cases[:3]):
+            example_text = case['message'][:80] + "..." if len(case['message']) > 80 else case['message']
+            confidence_text = "[{:.1f}% conf]".format(case['confidence'])
+            ax2.text(0.08, y_pos, '• {} "{}"'.format(confidence_text, example_text), 
+                    fontsize=9, color='darkorange', transform=ax2.transAxes, style='italic')
+            y_pos -= 0.04
+        
+        if len(cases) > 3:
+            ax2.text(0.08, y_pos, '... and {} more cases'.format(len(cases)-3), 
+                    fontsize=9, color='gray', transform=ax2.transAxes)
+            y_pos -= 0.04
+        
+        y_pos -= 0.03  # Extra space between categories
+        
+        if y_pos < 0.1:  # Prevent text from going off the bottom
+            break
+    
+    # Add summary boxes at the bottom
+    summary_text_left = """
+SUMMARY - FALSE POSITIVES:
+• Total: {} cases
+• Safe content flagged as harmful
+• May cause over-moderation
+• Impacts user experience negatively
+""".format(len(failure_report['false_positives']))
+    
+    summary_text_right = """
+SUMMARY - FALSE NEGATIVES:
+• Total: {} cases  
+• Harmful content missed
+• Safety risk for users
+• Requires immediate attention
+""".format(len(failure_report['false_negatives']))
+    
+    ax1.text(0.02, 0.15, summary_text_left, fontsize=10, transform=ax1.transAxes,
+             bbox=dict(boxstyle='round,pad=0.5', facecolor='mistyrose', alpha=0.8))
+    
+    ax2.text(0.02, 0.15, summary_text_right, fontsize=10, transform=ax2.transAxes,
+             bbox=dict(boxstyle='round,pad=0.5', facecolor='moccasin', alpha=0.8))
+    
+    plt.tight_layout()
+    plt.savefig('figures/13_qualitative_analysis.png', dpi=300, bbox_inches='tight')
+    plt.savefig('qualitative_failure_analysis.png', dpi=300, bbox_inches='tight')
+    print("   ✅ Qualitative analysis figure saved as 'qualitative_failure_analysis.png'")
+    print("   ✅ Also saved as 'figures/13_qualitative_analysis.png'")
+    
+    return fig
 
 def main():
     """Main evaluation function."""
@@ -519,8 +727,9 @@ def main():
     print("• Load and process {} test messages".format(302))  # We know it's 302 from the CSV
     print("• Run AI classification on each message")
     print("• Calculate detailed metrics and statistics")
-    print("• Generate 12 different visualizations")
-    print("• Analyze classification errors")
+    print("• Generate 13 different visualizations")
+    print("• Analyze classification errors with qualitative analysis")
+    print("• Export detailed failure lists for further review")
     print("="*60)
     
     start_time = time.time()
@@ -541,8 +750,11 @@ def main():
     # Create visualizations
     create_visualizations(true_labels, predictions, confidences, results)
     
-    # Analyze errors
-    analyze_errors(df, true_labels, predictions, confidences)
+    # Analyze errors with comprehensive failure analysis
+    failure_report = analyze_errors(df, true_labels, predictions, confidences)
+    
+    # Create qualitative analysis visualization
+    create_qualitative_analysis_figure(failure_report)
     
     # Detailed report
     print("\n📋 DETAILED SKLEARN CLASSIFICATION REPORT")
@@ -556,8 +768,10 @@ def main():
     print("="*60)
     print("📊 Total evaluation time: {:.1f} minutes".format(total_time / 60))
     print("📈 Average time per message: {:.2f} seconds".format(total_time / len(df)))
-    print("📁 Individual charts: figures/ folder (01-12)")
+    print("📁 Individual charts: figures/ folder (01-13)")
     print("📊 Combined overview: classifier_evaluation_combined.png")
+    print("📋 Qualitative analysis: qualitative_failure_analysis.png")
+    print("📄 Detailed failures: classification_failures.csv")
     print("="*60)
 
 if __name__ == "__main__":

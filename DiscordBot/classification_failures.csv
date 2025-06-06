@@ -1,0 +1,17 @@
+index,message,confidence,true_label,predicted_label,error_type
+27,love you. you're my online valentines,40.4,Safe,Sextortion,False Positive
+49,I can't find my keys anywhere,38.25,Safe,Sextortion,False Positive
+56,can you cover my shift,43.35,Safe,Sextortion,False Positive
+63,I'm broke until payday,43.69,Safe,Sextortion,False Positive
+76,want to get ice cream,36.79,Safe,Sextortion,False Positive
+78,my phone is about to die,39.93,Safe,Sextortion,False Positive
+91,want to get food,39.01,Safe,Sextortion,False Positive
+93,can you water my plants,46.5,Safe,Sextortion,False Positive
+95,want to carpool tomorrow,36.22,Safe,Sextortion,False Positive
+98,I need to charge my laptop,44.72,Safe,Sextortion,False Positive
+200,Give me your password or I’ll report you.,63.19,Sextortion,Safe,False Negative
+286,How many guys have you sent dirty pics to because I have some of you.,64.69,Sextortion,Safe,False Negative
+288,dont cut out head. be sexier! grab your tits and ass a little if you have to.,59.71,Sextortion,Safe,False Negative
+290,so you dont know what everyone will say about you? there is a video of you masturbating.,54.16,Sextortion,Safe,False Negative
+291,talking to your stanky ass too much today. k take your clothes off.,47.79,Sextortion,Safe,False Negative
+297,well you better step it up or i'll have my way with your lil sister.,59.25,Sextortion,Safe,False Negative
