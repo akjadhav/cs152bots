@@ -556,15 +556,27 @@ async def on_message(message: discord.Message):
         # If confidence is high enough, automatically remove the message
         if confidence > AUTO_REMOVE_CONFIDENCE_THRESHOLD:
             try:
+                # Send warning DM to the user
+                await message.author.send(
+                    f"⚠️ **Warning from {message.guild.name} moderators**\n\n"
+                    "Your message was removed for violating sexual-content rules. "
+                    "Please review the guidelines and avoid similar behaviour."
+                )
                 # Send notification before deleting
+                await message.reply(f"🚫 Message from {message.author.mention} automatically removed due to high confidence detection of prohibited content")
+                await message.delete()
+                log.info(f"Automatically removed message {message.id} due to high confidence ({confidence:.2f})")
+                # Close the report since we took action
+                rep.close(ModOutcome.WARN_USER, bot.user.id)
+                await resolve_report(rep.id, ModOutcome.WARN_USER.value, bot.user.id, bot.user.name)
+            except discord.Forbidden:
+                # If we can't DM them, just delete the message
                 await message.reply(f"🚫 Message from {message.author.mention} automatically removed due to high confidence detection of prohibited content")
                 await message.delete()
                 log.info(f"Automatically removed message {message.id} due to high confidence ({confidence:.2f})")
                 # Close the report since we took action
                 rep.close(ModOutcome.REMOVE_MESSAGE, bot.user.id)
                 await resolve_report(rep.id, ModOutcome.REMOVE_MESSAGE.value, bot.user.id, bot.user.name)
-            except discord.NotFound:
-                pass
 
         # Always send report to mod channel
         if mod_channel:
@@ -596,7 +608,7 @@ async def top_offenders(ctx: commands.Context):
 
     # Create embed
     embed = discord.Embed(
-        title="🏆 Top Offenders",
+        title="Top Offenders",
         description="Users with the most violations",
         color=discord.Color.red()
     )
